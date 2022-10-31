@@ -164,6 +164,7 @@ async function onSDPAnswerReceived({ room, answer }) {
 
 async function onNewIceCandidateAdded({ room, candidate }) {
   console.log(`*** 新的 Candidate 加入 ${room}`, JSON.stringify(candidate));
+  if (!candidate) return;
   try {
     await peer.addIceCandidate(candidate);
   } catch (error) {
