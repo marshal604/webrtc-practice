@@ -6,4 +6,4 @@ services:
       dockerfile: Dockerfile
     ports:
       - "80:80"
-    command: ['node', 'app.js']
+    command: ['node', 'server.js']
