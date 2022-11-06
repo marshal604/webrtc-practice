@@ -3,9 +3,6 @@ let peer = null; // RTCPeerConnection
 let cacheStream = null; // MediaStreamTrack
 
 function init() {
-  const socketId = document.getElementById("socket-id");
-  socketId.textContent = socket.id;
-
   socket.on("newUser", ({ username, room }) => {
     console.log(`歡迎 ${username} 進到房間 ${room}`);
   });
@@ -77,14 +74,12 @@ function onSendIceCandidateToRemotePeer(event) {
 function onRemoteStreamReceived(event) {
   console.log("*** receive remote stream");
   const remoteVideos = document.getElementById("remote-videos");
-  const h3 = document.createElement("h3");
-  h3.textContent = socket.id;
   const remoteVideo = document.createElement("video");
   remoteVideo.autoplay = true;
+  remoteVideo.setAttribute("playsinline", true);
   console.log("event.streams", event.streams);
   const [stream] = event.streams;
   if (remoteVideo.srcObject !== stream) remoteVideo.srcObject = stream;
-  remoteVideos.appendChild(h3);
   remoteVideos.appendChild(remoteVideo);
 }
 
@@ -102,10 +97,19 @@ async function onNegotiationNeeded(event) {
     console.error("onNegotiationNeeded error", error.message);
   }
 }
-
+const iceConfiguration = {
+  iceServers: [
+    {
+      urls: "stun:stun.l.google.com:19302",
+    },
+    {
+      urls: "stun:stun1.l.google.com:19302",
+    },
+  ],
+};
 function createPeerConnection() {
   console.log("creating peer connection");
-  peer = new RTCPeerConnection();
+  peer = new RTCPeerConnection(iceConfiguration);
 }
 
 async function addStreamProcess() {
